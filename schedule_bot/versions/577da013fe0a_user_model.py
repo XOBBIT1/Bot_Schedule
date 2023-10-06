@@ -3,8 +3,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-# revision identifiers, used by Alembic.
-revision: str = '80fc41db9f30'
+revision: str = '577da013fe0a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -22,9 +21,10 @@ def upgrade() -> None:
                     )
     op.create_table('Trainings',
                     sa.Column('id', sa.BigInteger(), nullable=False),
-                    sa.Column('training_name', sa.String(), nullable=True),
+                    sa.Column('training_day', sa.String(), nullable=True),
                     sa.Column('training_time', sa.String(), nullable=True),
                     sa.Column('user_id', sa.BigInteger(), nullable=True),
+                    sa.Column('booked', sa.Boolean(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['Users.id'], ),
                     sa.PrimaryKeyConstraint('id')
                     )
