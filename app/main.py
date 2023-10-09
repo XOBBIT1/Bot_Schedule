@@ -6,10 +6,11 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 
 from app.core.bot_commands.commands import starter, for_coach, ask_name, dop_starter, create_training_time_of_training, \
-    new_admin_menu, delete_by_training_id, sign_up_for_training_id, terminate_training
-from app.core.callbacks.admin_callback import delete_training, create_training_week_day, check_users
+    new_admin_menu
+from app.core.callbacks.admin_callback import delete_training, create_training_week_day, check_users, \
+    delete_by_training_id
 from app.core.callbacks.starter_callback import sign_up_for_workout, list_of_training, all_user_trainings, \
-    cancel_user_training
+    cancel_user_training, sign_up_for_training_id, terminate_training
 from app.core.staets.bot_state import UserState, AdminState
 from app.settings.config_settings import token, dp, router
 
@@ -43,18 +44,6 @@ async def cmd_dop_start(message: types.Message):
     await dop_starter(message)
 
 
-@router.message(UserState.sign_up_for_training)
-async def cmd_successfully_sign_up(message: types.Message, state: FSMContext):
-    await message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_6VJ6_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
-    await sign_up_for_training_id(message, state)
-
-
-@router.message(UserState.cancel_training_for_user)
-async def cmd_cancel_training(message: types.Message, state: FSMContext):
-    await message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_6VJ6_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
-    await terminate_training(message, state)
-
-
 @router.message(AdminState.week_day)
 async def cmd_create_training_time(message: types.Message, state: FSMContext):
     await create_training_time_of_training(message, state)
@@ -66,16 +55,31 @@ async def cmd_create_training_new_menu(message: types.Message, state: FSMContext
     await new_admin_menu(message, state)
 
 
-@router.message(AdminState.delete_training_id)
-async def cmd_delete_training_new_menu(message: types.Message, state: FSMContext):
-    await message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_6VJ6_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
-    await delete_by_training_id(message, state)
-
-
 # Callbacks
 @router.callback_query(F.data == "sing_up")
-async def callback_beginner(callback: types.CallbackQuery, state: FSMContext):
-    await sign_up_for_workout(callback, state)
+async def callback_beginner(callback: types.CallbackQuery):
+    await sign_up_for_workout(callback)
+
+
+@router.callback_query(F.data.startswith("signup_button_"))
+async def callback_successfully_sign_up(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_6VJ6"
+                                                  "_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
+    await sign_up_for_training_id(callback, state)
+
+
+@router.callback_query(F.data.startswith("terminate_button_"))
+async def callback_cancel_training(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_"
+                                                  "6VJ6_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
+    await terminate_training(callback, state)
+
+
+@router.callback_query(F.data.startswith("delete_button_"))
+async def cmd_delete_training_new_menu(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.answer_sticker(sticker="CAACAgIAAxkBAAEKcQtlHBAnYmCMR602x_"
+                                                  "6VJ6_DND3BswACJgMAArVx2gY-GQuL5xwZQDAE")
+    await delete_by_training_id(callback, state)
 
 
 @router.callback_query(F.data == "training_list")
@@ -84,8 +88,8 @@ async def callback_trainings_list(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "delete")
-async def callback_delete_training(callback: types.CallbackQuery, state: FSMContext):
-    await delete_training(callback.message, state)
+async def callback_delete_training(callback: types.CallbackQuery):
+    await delete_training(callback.message)
 
 
 @router.callback_query(F.data == "list_of_training")
@@ -104,8 +108,8 @@ async def callback_check_user(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "terminate_training")
-async def callback_checking_user(callback: types.CallbackQuery, state: FSMContext):
-    await cancel_user_training(callback, state)
+async def callback_checking_user(callback: types.CallbackQuery):
+    await cancel_user_training(callback)
 
 
 @router.callback_query(F.data == "back_to_menu")
