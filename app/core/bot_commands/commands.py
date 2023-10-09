@@ -2,9 +2,9 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from app.core.keyboards.starter_keyboard import keyboard_beginner, keyboard_admin, back_to_menu_admin
-from app.core.servises.serves_user import create_user, get_user_name, sign_up_user_for_training, cancel_training, \
+from app.core.servises.serves_user import create_user, get_user_name, \
     check_user
-from app.core.servises.serves_training import create_training, delete_training_by_id
+from app.core.servises.serves_training import create_training
 from app.core.staets.bot_state import UserState, AdminState
 
 create_training_dict = {}
@@ -71,32 +71,3 @@ async def new_admin_menu(message: types.Message, state: FSMContext):
         "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
         parse_mode="HTML", reply_markup=keyboard_admin())
     await state.set_state(AdminState.new_menu_create)
-
-
-async def delete_by_training_id(message: types.Message, state: FSMContext):
-    data = await state.update_data(training_id=message.text)
-    await delete_training_by_id(data['training_id'])
-    await message.answer(
-        f"<b>Тренеровка <i>{data['training_id']}</i> была удалена!</b>\n\n"
-        "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
-        parse_mode="HTML", reply_markup=keyboard_admin())
-    await state.set_state(AdminState.new_menu_delete)
-
-
-async def sign_up_for_training_id(message: types.Message, state: FSMContext):
-    data = await state.update_data(training_id=message.text)
-    await sign_up_user_for_training(message, data['training_id'])
-    await message.answer("Ты успешно записался на <b>Тренеровку</b>!\n\n"
-                         "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
-                         parse_mode="HTML", reply_markup=keyboard_beginner())
-    await state.update_data(name=message.text)
-    await state.set_state(UserState.any_text)
-
-
-async def terminate_training(message: types.Message, state: FSMContext):
-    data = await state.update_data(training_id=message.text)
-    await cancel_training(message, data['training_id'])
-    await message.answer("Ты успешно отменил запись на <b>Тренеровку</b>!\n\n"
-                         "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
-                         parse_mode="HTML", reply_markup=keyboard_beginner())
-    await state.set_state(UserState.any_text)
