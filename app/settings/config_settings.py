@@ -2,7 +2,7 @@ import os
 import dotenv
 from pathlib import Path
 
-from aiogram import Dispatcher, Router
+from aiogram import Dispatcher, Router, Bot
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,6 +15,8 @@ if os.path.isfile(dotenv_file):
 token = os.environ['BOT_TOKEN']
 dp = Dispatcher()
 router = Router()
+bot = Bot(token)
+
 
 # bd_settings
 host = os.environ['HOST']

@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from aiogram import Bot, types, F
+from aiogram import types, F
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 
@@ -12,11 +12,9 @@ from app.core.callbacks.admin_callback import delete_training, create_training_w
 from app.core.callbacks.starter_callback import sign_up_for_workout, list_of_training, all_user_trainings, \
     cancel_user_training, sign_up_for_training_id, terminate_training
 from app.core.staets.bot_state import UserState, AdminState
-from app.settings.config_settings import token, dp, router
+from app.settings.config_settings import dp, router, bot
 
 from app.settings import logging_settings
-
-bot = Bot(token)
 
 
 # Commands

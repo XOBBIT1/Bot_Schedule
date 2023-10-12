@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
+from app.core.animation import loading
 from app.core.keyboards.starter_keyboard import keyboard_beginner, keyboard_admin, back_to_menu_admin
 from app.core.servises.serves_user import create_user, get_user_name, \
     check_user
@@ -57,6 +58,7 @@ async def for_coach(message: types.Message):
 
 
 async def create_training_time_of_training(message: types.Message, state: FSMContext):
+    await loading(message)
     await state.update_data(week_day=message.text)
     await message.answer("Введи <i>Время Тренеровки</i> \n\n "
                          "Пример: <b><i>12:45</i></b>", parse_mode="HTML", reply_markup=back_to_menu_admin())
@@ -66,6 +68,7 @@ async def create_training_time_of_training(message: types.Message, state: FSMCon
 async def new_admin_menu(message: types.Message, state: FSMContext):
     data = await state.update_data(time_of_training=message.text)
     await create_training(data['week_day'], data['time_of_training'])
+    await loading(message)
     await message.answer(
         f"<b>Тренеровка в <i>{data['week_day']} в {data['time_of_training']}</i> успешно созданна!</b>\n\n"
         "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",

@@ -1,19 +1,15 @@
 import time
+from aiogram import types
 
-import telebot
-from app.settings.config_settings import token
-
-bot = telebot.TeleBot(token, parse_mode='html')
+from app.settings.config_settings import bot
 
 
-def loading(message, string, icon):
-    load = string
-    wait = bot.send_message(message.chat.id, load.format(f' {icon}'))
+async def loading(message: types.Message):
+    load = "Загрузка: {}"
+    sent_message = await message.answer(load.format("⏳"))
+
     for i in range(2, 7):
         time.sleep(1)
-        bot.edit_message_text(load.format(f' {icon * i}'), message.chat.id, wait.message_id)
-
-
-def get_sticker(message, name_of_file):
-    sticker = bot.send_sticker(message.chat.id, open(f"static/{name_of_file}", "rb"))
-    return sticker
+        updated_text = load.format("⏳" * i)
+        updated_text += " "
+        await bot.edit_message_text(chat_id=sent_message.chat.id, message_id=sent_message.message_id, text=updated_text)

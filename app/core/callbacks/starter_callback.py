@@ -1,5 +1,6 @@
 from aiogram import types
 
+from app.core.animation import loading
 from app.core.keyboards.starter_keyboard import keyboard_admin, keyboard_beginner
 from app.core.keyboards.trainings_keyboard import keyboard_choice
 from app.core.servises.serves_training import get_all_not_booked_trainings
@@ -29,6 +30,7 @@ async def sign_up_for_workout(callback: types.CallbackQuery):
 async def sign_up_for_training_id(callback: types.CallbackQuery, state: FSMContext):
     callback_data = callback.data
     training_id = callback_data.split('_')[2]
+    await loading(callback.message)
     await sign_up_user_for_training(callback.message, training_id)
     await callback.message.answer("Ты успешно записался на <b>Тренеровку</b>!\n\n"
                                   "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
@@ -93,6 +95,7 @@ async def cancel_user_training(callback: types.CallbackQuery):
 async def terminate_training(callback: types.CallbackQuery, state: FSMContext):
     callback_data = callback.data
     training_id = callback_data.split('_')[2]
+    await loading(callback.message)
     await cancel_training(callback.message, training_id)
     await callback.message.answer("Ты успешно отменил запись на <b>Тренеровку</b>!\n\n"
                                   "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",

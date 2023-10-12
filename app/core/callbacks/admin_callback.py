@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
+from app.core.animation import loading
 from app.core.keyboards.starter_keyboard import keyboard_admin, back_to_menu_admin
 from app.core.keyboards.trainings_keyboard import keyboard_choice_admin
 from app.core.servises.serves_training import get_all_trainings, \
@@ -59,6 +60,7 @@ async def delete_by_training_id(callback: types.CallbackQuery, state: FSMContext
     callback_data = callback.data
     training_id = callback_data.split('_')[2]
     await delete_training_by_id(training_id)
+    await loading(callback.message)
     await callback.message.answer(
         "<b>Тренеровка была удалена!</b>\n\n"
         "Если тебе захочется сделать другие манипуляции, то список снизу 👇\n\n",
